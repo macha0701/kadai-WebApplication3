@@ -1,16 +1,22 @@
 'use strict';
 const http = require('node:http');
-const auth = require('http-auth');
+const crypto = require('node:crypto');
+const Cookies = require('cookies');
 const router = require('./lib/router');
 
-const basic = auth.basic({
-  realm: 'Enter username and password.',
-  file: './users.htpasswd'
-});
+const userIdKey = 'todoUserId';
 
-const server = http.createServer(basic.check((req, res) => {
-    router.route(req, res);
-  }))
+const server = http.createServer((req, res) => {
+  const cookies = new Cookies(req, res);
+  let userId = cookies.get(userIdKey);
+  // cookieがない、または形式が違うときは、新しいIDを発行する
+  if (!userId || !/^[0-9a-f]{32}$/.test(userId)) {
+    userId = crypto.randomBytes(16).toString('hex');
+  }
+  cookies.set(userIdKey, userId, { maxAge: 365 * 86400 * 1000, httpOnly: true });
+  req.user = userId;
+  router.route(req, res);
+})
   .on('error', e => {
     console.error('Server Error', e);
   })

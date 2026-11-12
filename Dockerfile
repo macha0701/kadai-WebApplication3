@@ -15,5 +15,6 @@ ENV TZ=Asia/Tokyo
 WORKDIR /app
 COPY . /app
 RUN yarn install
+RUN npx prisma generate
 
-CMD ["sh", "run.sh"]
+CMD ["yarn", "start"]

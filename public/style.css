@@ -9,3 +9,10 @@ p.card-text {
   white-space: pre-wrap;
   word-break: break-all;
 }
+body {
+  max-width: 640px;
+}
+
+.card {
+  border-radius: 8px;
+}

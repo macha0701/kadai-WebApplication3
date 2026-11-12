@@ -9,11 +9,11 @@ html(lang="ja")
     link(rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css")
     link(rel="stylesheet" href="style.css")
-    title NNチャット
+    title ToDo
   body.container.overflow-scroll(data-bs-theme=currentTheme)
     nav.navbar.fixed-top.bg-primary
       div.container-fluid
-        h1.text-light.navbar-brand.mx-auto NNチャット
+        h1.text-light.navbar-brand.mx-auto ToDo
           i.bi-chat-dots-fill.ms-1
         div.dropdown
           button.btn.btn-outline-light.dropdown-toggle(type="button" id="menu" data-bs-toggle="dropdown" aria-expanded="false") #{user}
@@ -33,7 +33,11 @@ html(lang="ja")
                 i.bi-patch-check-fill.ms-1
             - const tooltipTitle = `<small>${post.absoluteCreatedAt}</small>`
             small.card-text.float-end(data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title=tooltipTitle) #{post.relativeCreatedAt}
-          p.card-text.lead #{post.content}
+          p.card-text.lead(class=(post.done ? 'text-decoration-line-through text-muted' : '')) #{post.content}
+          form(method="post" action="/posts/toggle")
+            input(type="hidden" name="id" value=post.id)
+            input(type="hidden" name="oneTimeToken" value=oneTimeToken)
+            button(type="submit").btn.btn-outline-success.btn-sm #{post.done ? '未完了に戻す' : '完了にする'}
         - const isDeletable = (user === post.postedBy || user === 'admin')
         if isDeletable
           div.card-footer.d-flex.justify-content-end
